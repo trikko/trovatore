@@ -91,7 +91,17 @@ void main(string[] args)
 		all
 	}
 
+	enum MatchType {
+		starts,
+		ends,
+		contains,
+		exact
+	}
+
 	SearchType type = SearchType.all;
+	MatchType match = MatchType.contains;
+
+	bool enableWildcards = true;
 	bool fail = false;
 
 	GetoptResult parsedArgs;
@@ -102,6 +112,8 @@ void main(string[] args)
 		parsedArgs = getopt(
 			args,
 			"type|t", &type,
+			"enable-wildcards|w", &enableWildcards,
+			"match|m", &match,
 		);
 	}
 	catch (Exception e)
@@ -123,8 +135,10 @@ void main(string[] args)
 	{
 		stderr.writeln("Usage: trovatore [options] <target>");
 		stderr.writeln("Options:");
-		stderr.writeln("  -t, --type <file|dir|all>  	Type of search (default: all) ");
-		stderr.writeln("  -h, --help         			Show help information");
+		stderr.writeln("  -t, --type <file|dir|all>                   Type of search (default: all) ");
+		stderr.writeln("  -m, --match <starts|ends|contains|exact>    Match type (default: contains) ");
+		stderr.writeln("  -w, --enable-wildcards                      Enable wildcards (default: true) ");
+		stderr.writeln("  -h, --help                                  Show help information");
 		return;
 	}
 
@@ -180,25 +194,27 @@ void main(string[] args)
 	}
 
 	// Get targets
-	auto target = args[1..$];
+	auto target = args[1..$].join(" ");
 
 	// Regex expression
 	string expr;
 
-	foreach(t; target)
+	foreach(c; target)
 	{
-		string s;
-
-		if (expr.length > 0) expr ~= "|";
-
-		foreach(c; t)
+		if (enableWildcards)
 		{
-			if(c == '*') s ~= ".*";
-			else s ~= `\x` ~ format("%02x", cast(ubyte)(std.ascii.toLower(c)));
+			if(c == '*') expr ~= ".*";
+			else if(c == '?') expr ~= ".";
+			else expr ~= `\x` ~ format("%02x", cast(ubyte)(std.ascii.toLower(c)));
 		}
-
-		expr ~= "(" ~ s ~ ")";
+		else expr ~= `\x` ~ format("%02x", cast(ubyte)(std.ascii.toLower(c)));
 	}
+
+	expr = "(" ~ expr ~ ")";
+
+	if (match == MatchType.exact) expr = "^" ~ expr ~ "$";
+	else if (match == MatchType.starts) expr = "^" ~ expr;
+	else if (match == MatchType.ends) expr ~= "$";
 
 	// Compile regex expression
 	auto re = regex(expr);
@@ -267,43 +283,12 @@ void main(string[] args)
 
 					foreach(t; target)
 					{
-						// Exact match
-						if (name == t)
+						if (name.match(re))
 						{
-							cwriteln("<white>[M]</white> ", escapeCCL(d.name));
+							cwriteln(escapeCCL(d.name));
 							found = true;
 							break;
 						}
-
-						// Starts with
-						else if (name.startsWith(t))
-						{
-							cwriteln("<white>[S]</white> ", escapeCCL(d.name));
-							found = true;
-							break;
-						}
-
-						// Ends with
-						else if (name.endsWith(t))
-						{
-							cwriteln("<white>[E]</white> ", escapeCCL(d.name));
-							found = true;
-							break;
-						}
-
-						// Contains
-						else if (name.canFind(t))
-						{
-							cwriteln("<white>[C]</white> ", escapeCCL(d.name));
-							found = true;
-							break;
-						}
-					}
-
-					// Regex match
-					if (!found && name.match(re))
-					{
-						cwriteln("<white>[W]</white> ", escapeCCL(d.name));
 					}
 
 				}
