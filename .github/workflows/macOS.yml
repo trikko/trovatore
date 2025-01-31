@@ -20,12 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-13, macos-14]
-        dc: [ldc-latest, dmd-latest]
-        exclude:
-        - os: macos-14
-          dc: dmd-latest
-        - os: macos-13
-          dc: ldc-latest
+        dc: [ldc-latest]
 
     runs-on: ${{ matrix.os }}
 
