@@ -47,4 +47,4 @@ jobs:
         dropbox-app-secret: ${{ secrets.DROPBOX_APP_SECRET }}
         dropbox-refresh-token: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
         source-path: trovatore
-        target-path: app/${{ matrix.os }}/trovatore
+        target-path: /${{ matrix.os }}/trovatore
