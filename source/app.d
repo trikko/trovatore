@@ -31,11 +31,12 @@ version(linux)
 
 }
 
-version(osx)
+version(OSX)
 {
 	auto getUserDirectories()
 	{
-		string home = environment.get("HOME");
+		string[] paths;
+		istring home = environment.get("HOME");
 
 		if (home.length > 0)
 		{
@@ -67,7 +68,7 @@ version(linux)
 	}
 }
 
-version(osx)
+version(OSX)
 {
 	string getConfigDir()
 	{
