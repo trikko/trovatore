@@ -17,6 +17,7 @@ jobs:
     # Set up Docker build
     - name: Build Docker image
       run: |
+        echo "$GITHUB_SHA" > version
         echo "FROM alpine:latest
         RUN apk add vim gcc musl-dev ldc dub llvm-libunwind-static openssl-libs-static gzip upx cmake make
         WORKDIR /app

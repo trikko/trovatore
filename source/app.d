@@ -24,6 +24,8 @@ SOFTWARE.
 
 import std;
 
+enum buildVersion = import("version");
+
 version(linux)
 {
 	auto getUserDirectories()
@@ -157,6 +159,7 @@ void main(string[] args)
 
 	if (fail)
 	{
+		stderr.writeln("trovatore [", buildVersion, "]\n");
 		stderr.writeln("Usage: trovatore [options] <target>");
 		stderr.writeln("Options:");
 		stderr.writeln("  -t, --type <file|dir|all>                   Type of search (default: all) ");
@@ -185,7 +188,7 @@ void main(string[] args)
 		configSources ~= buildPath(sourcesDir, "01-system");
 		std.file.write(configSources[$-1],  ["/opt", "/etc"].join("\n"));
 
-		configSources ~= buildPath(sourcesDir, "02-root");
+		configSources ~= buildPath(sourcesDir, "99-root");
 		std.file.write(configSources[$-1],  ["/"].join("\n"));
 	}
 

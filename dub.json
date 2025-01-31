@@ -16,7 +16,8 @@
 			"dflags-linux-ldc": ["-static", "-nodefaultlib"]
 		}
 	],
-	"description": "A minimal D application.",
+	"stringImportPaths": ["."],
+	"description": "The fast way to search files.",
 	"license": "MIT",
 	"name": "trovatore"
 }
