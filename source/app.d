@@ -24,7 +24,7 @@ SOFTWARE.
 
 import std;
 
-enum buildVersion = import("version");
+enum buildVersion = import("version").chomp;
 
 version(linux)
 {

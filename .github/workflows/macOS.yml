@@ -32,7 +32,7 @@ jobs:
 
     - name: 'Build & Test'
       run: |
-        echo "$GITHUB_SHA" > version
+        echo "commit: ${GITHUB_SHA::7}" > version
         dub build --compiler=$DC --build=release-nobounds
 
     - name: Upload binary as artifact
