@@ -2,7 +2,7 @@
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
 # documentation.
-name: macOS build
+name: Build Trovatore (macOS)
 
 on:
   push:
@@ -47,4 +47,4 @@ jobs:
         dropbox-app-secret: ${{ secrets.DROPBOX_APP_SECRET }}
         dropbox-refresh-token: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
         source-path: trovatore
-        target-path: /${{ matrix.os }}/trovatore
+        target-path: /release/macos-${{ runner.arch }}/trovatore
