@@ -24,10 +24,18 @@ SOFTWARE.
 
 import std;
 
+// This will be replaced by the version from the build system
 enum buildVersion = import("version").chomp;
+
+auto getHomeDirectory()
+{
+	string home = cast(string)(environment.get("HOME").dup);
+	return home;
+}
 
 version(linux)
 {
+
 	auto getUserDirectories()
 	{
 		string[] paths;
@@ -40,15 +48,6 @@ version(linux)
 			paths ~= executeShell("xdg-user-dir VIDEOS").output.chomp;
 			paths ~= executeShell("xdg-user-dir TEMPLATES").output.chomp;
 			paths ~= executeShell("xdg-user-dir PUBLICSHARE").output.chomp;
-			paths ~= executeShell("xdg-user-dir").output.chomp;
-		}
-		else
-		{
-			string home = environment.get("HOME");
-
-			if (home.length > 0)
-				paths ~= home;
-
 		}
 
 		return paths;
@@ -61,7 +60,7 @@ version(OSX)
 	auto getUserDirectories()
 	{
 		string[] paths;
-		string home = environment.get("HOME");
+		string home = getHomeDirectory();
 
 		if (home.length > 0)
 		{
@@ -73,7 +72,6 @@ version(OSX)
 			paths ~= home ~ "/Movies";
 			paths ~= home ~ "/Sites";
 			paths ~= home ~ "/Public";
-			paths ~= home;
 		}
 
 		return paths;
@@ -84,7 +82,7 @@ version(linux)
 {
 	string getConfigDir()
 	{
-		string home = environment.get("HOME");
+		string home = getHomeDirectory();
 
 		if (home.length > 0)
 			return home ~ "/.config/trovatore/";
@@ -97,7 +95,7 @@ version(OSX)
 {
 	string getConfigDir()
 	{
-		string home = environment.get("HOME");
+		string home = getHomeDirectory();
 
 		if (home.length > 0)
 			return home ~ "/Library/Application Support/trovatore/";
@@ -127,6 +125,7 @@ void main(string[] args)
 	SearchType type = SearchType.all;
 	MatchType match = MatchType.contains;
 
+	bool skipHidden = true;
 	bool enableWildcards = true;
 	bool fail = false;
 
@@ -140,6 +139,7 @@ void main(string[] args)
 			"type|t", &type,
 			"enable-wildcards|w", &enableWildcards,
 			"match|m", &match,
+			"skip-hidden|s", &skipHidden,
 		);
 	}
 	catch (Exception e)
@@ -165,6 +165,7 @@ void main(string[] args)
 		stderr.writeln("  -t, --type <file|dir|all>                   Type of search (default: all) ");
 		stderr.writeln("  -m, --match <starts|ends|contains|exact>    Match type (default: contains) ");
 		stderr.writeln("  -w, --enable-wildcards                      Enable wildcards (default: true) ");
+		stderr.writeln("  -s, --skip-hidden                           Skip hidden directories (default: true)");
 		stderr.writeln("  -h, --help                                  Show help information");
 		return;
 	}
@@ -185,13 +186,15 @@ void main(string[] args)
 		configSources ~= buildPath(sourcesDir, "00-user");
 		std.file.write(configSources[$-1], getUserDirectories().join("\n"));
 
-		configSources ~= buildPath(sourcesDir, "01-system");
+		configSources ~= buildPath(sourcesDir, "01-home");
+		std.file.write(configSources[$-1], getHomeDirectory());
+
+		configSources ~= buildPath(sourcesDir, "02-system");
 		std.file.write(configSources[$-1],  ["/opt", "/etc"].join("\n"));
 
 		configSources ~= buildPath(sourcesDir, "99-root");
-		std.file.write(configSources[$-1],  ["/"].join("\n"));
+		std.file.write(configSources[$-1], "/");
 	}
-
 
 	// Add sources from config
 	foreach(c; configSources)
@@ -213,8 +216,8 @@ void main(string[] args)
 	{
 		// Default blacklist
 		blacklist = [
-			"/dev", "/proc", "/sys", "/run", "/mnt", "/snap", "/usr/share/man", "/usr/share/doc", "/var/lib/dpkg", "/var/lib/apt", "/var/lib/pacman", "/var/lib/rpm", "/usr/src", "/etc/firejail",
-			".gradle", ".dub", ".npm", "node_modules", "bower_components", ".cargo", ".maven", ".venv", "venv", ".virtualenv", "__pycache__", ".cache", "cache", ".tmp", "tmp", ".git", ".svn",
+			"/dev", "/proc", "/sys", "/run", "/mnt", "/snap", "/usr/share/man", "/usr/share/doc", "/var/lib/", "/usr/src", "/etc/firejail",
+			".gradle", ".dub", ".npm", "node_modules", "bower_components", ".cargo", ".maven", ".venv", "venv", ".virtualenv", "__pycache__", ".cache", "cache", ".tmp", "tmp", ".git", ".svn", ".github",
 			".hg", ".bzr", ".vscode", ".idea", ".eclipse", ".vs", ".atom", ".DS_Store", "__MACOSX", "log", "logs", ".log", "debug", ".thumbnails", ".Trash", ".config", ".local", ".cache", "site-packages", "packages", "extensions", "pkg", "pkgs",
 			"modules", "plugins", "plugin", "addons", "dist-packages", "lib-dynload", "cmakefiles", ".deps", ".obj", ".o", "meson-logs", "meson-info", ".ninja_log", ".ninja_build", "autom4ate.cache", ".mozilla"
 		];
@@ -287,6 +290,9 @@ void main(string[] args)
 					// Should we recurse into this directory?
 					if (d.isDir)
 					{
+						// Skip hidden directories
+						if (skipHidden && d.name.startsWith(".")) continue;
+
 						// Skip blacklisted directories
 						if (blacklist.canFind(d.name)) continue;
 						if (blacklist.canFind(d.name.baseName)) continue;
