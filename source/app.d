@@ -35,7 +35,7 @@ version(OSX)
 	auto getUserDirectories()
 	{
 		string[] paths;
-		istring home = environment.get("HOME");
+		string home = environment.get("HOME");
 
 		if (home.length > 0)
 		{
