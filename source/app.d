@@ -162,10 +162,10 @@ void main(string[] args)
 		stderr.writeln("trovatore [", buildVersion, "]\n");
 		stderr.writeln("Usage: trovatore [options] <target>");
 		stderr.writeln("Options:");
-		stderr.writeln("  -t, --type <file|dir|all>                   Type of search (default: all) ");
-		stderr.writeln("  -m, --match <starts|ends|contains|exact>    Match type (default: contains) ");
-		stderr.writeln("  -w, --enable-wildcards                      Enable wildcards (default: true) ");
-		stderr.writeln("  -s, --skip-hidden                           Skip hidden directories (default: true)");
+		stderr.writeln("  -t, --type=<file|dir|all>                   Type of search (default: all) ");
+		stderr.writeln("  -m, --match=<starts|ends|contains|exact>    Match type (default: contains) ");
+		stderr.writeln("  -w, --enable-wildcards=<true|false>         Enable wildcards (default: true) ");
+		stderr.writeln("  -s, --skip-hidden=<true|false>              Skip hidden directories (default: true)");
 		stderr.writeln("  -h, --help                                  Show help information");
 		return;
 	}
@@ -291,7 +291,7 @@ void main(string[] args)
 					if (d.isDir)
 					{
 						// Skip hidden directories
-						if (skipHidden && d.name.startsWith(".")) continue;
+						if (skipHidden && d.name.baseName.startsWith(".")) continue;
 
 						// Skip blacklisted directories
 						if (blacklist.canFind(d.name)) continue;
