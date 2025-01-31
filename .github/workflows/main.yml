@@ -1,0 +1,44 @@
+name: Build Trovatore (linux-static)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-export:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Set up Docker build
+    - name: Build Docker image
+      run: |
+        echo "FROM alpine:latest
+        RUN apk add vim gcc musl-dev ldc dub llvm-libunwind-static openssl-libs-static gzip upx cmake make
+        WORKDIR /app
+        COPY . .
+        CMD [\"dub\", \"build\", \"--build=release-nobounds\"]" > Dockerfile
+        docker build -t trovatore-image .
+
+    # Run the Docker container to build the project
+    - name: Run Docker container and build project
+      run: |
+        docker run --name trovatore-container trovatore-image || true
+
+    # Copy compiled file from Docker container to host
+    - name: Copy compiled binary
+      run: |
+        docker cp trovatore-container:/app/trovatore .
+        docker rm trovatore-container
+        strip -s trovatore
+
+    # Upload the binary as an artifact
+    - name: Upload binary as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: trovatore
+        path: trovatore
