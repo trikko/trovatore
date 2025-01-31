@@ -17,6 +17,6 @@
 		}
 	],
 	"description": "A minimal D application.",
-	"license": "proprietary",
+	"license": "MIT",
 	"name": "trovatore"
 }
