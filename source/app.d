@@ -1,5 +1,4 @@
 import std;
-import consolecolors;
 
 version(linux)
 {
@@ -288,7 +287,7 @@ void main(string[] args)
 					{
 						if (name.match(re))
 						{
-							cwriteln(escapeCCL(d.name));
+							writeln(d.name);
 							found = true;
 							break;
 						}

@@ -21,7 +21,7 @@ jobs:
         RUN apk add vim gcc musl-dev ldc dub llvm-libunwind-static openssl-libs-static gzip upx cmake make
         WORKDIR /app
         COPY . .
-        CMD [\"dub\", \"build\", \"--build=release-nobounds\"]" > Dockerfile
+        CMD [\"dub\", \"build\", \"--build=release-nobounds\", \"--config=trovatore-static\"]" > Dockerfile
         docker build -t trovatore-image .
 
     # Run the Docker container to build the project
