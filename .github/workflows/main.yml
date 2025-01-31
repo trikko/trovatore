@@ -42,3 +42,12 @@ jobs:
       with:
         name: trovatore
         path: trovatore
+
+    - name: Upload to Dropbox
+      uses: Lewuathe/dropbox-github-action@v1
+      with:
+        dropbox-app-key: ${{ secrets.DROPBOX_APP_KEY }}
+        dropbox-app-secret: ${{ secrets.DROPBOX_APP_SECRET }}
+        dropbox-refresh-token: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
+        source-path: trovatore
+        target-path: /app/trovatore
