@@ -1,0 +1,45 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+name: macOS build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-13, macos-14]
+        dc: [ldc-latest, dmd-latest]
+        exclude:
+        - os: macos-14
+          dc: dmd-latest
+        - os: macos-13
+          dc: ldc-latest
+
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dlang-community/setup-dlang@4c99aa991ce7d19dd3064de0a4f2f6b2f152e2d7
+
+    - name: 'Build & Test'
+      run: |
+        # Build the project, with its main file included, without unittests
+        dub build --compiler=$DC --build=release-nobounds
+
+    - name: Upload binary as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: trovatore-${{ matrix.os }}
+        path: trovatore
