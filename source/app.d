@@ -165,8 +165,6 @@ void main(string[] args)
 		std.file.write(configSources[$-1],  ["/"].join("\n"));
 	}
 
-	// Add current working directory to sources
-	sources ~= [getcwd()];
 
 	// Add sources from config
 	foreach(c; configSources)
@@ -174,6 +172,10 @@ void main(string[] args)
 		auto lines = c.readText.splitLines.filter!(s => s.length > 0).array;
 		sources ~= lines;
 	}
+
+	// Add current working directory to sources
+	if (sources.length > 0) sources[0] ~= getcwd();
+	else sources ~= [getcwd()];
 
 	// Get blacklist
 	if (exists(buildPath(configDir, "blacklist")))
