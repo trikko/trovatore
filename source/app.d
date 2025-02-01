@@ -39,15 +39,13 @@ version(linux)
 	auto getUserDirectories()
 	{
 		string[] paths;
-		if (executeShell("xdg-user-dir").status == 0)
+
+		if (execute(["xdg-user-dir"]).status == 0)
 		{
-			paths ~= executeShell("xdg-user-dir DOCUMENTS").output.chomp;
-			paths ~= executeShell("xdg-user-dir DOWNLOAD").output.chomp;
-			paths ~= executeShell("xdg-user-dir MUSIC").output.chomp;
-			paths ~= executeShell("xdg-user-dir PICTURES").output.chomp;
-			paths ~= executeShell("xdg-user-dir VIDEOS").output.chomp;
-			paths ~= executeShell("xdg-user-dir TEMPLATES").output.chomp;
-			paths ~= executeShell("xdg-user-dir PUBLICSHARE").output.chomp;
+			immutable dirs = ["DESKTOP", "DOWNLOAD", "DOCUMENTS", "MUSIC", "PICTURES", "VIDEOS", "TEMPLATES", "PUBLICSHARE"];
+
+			foreach(dir; dirs)
+				paths ~= execute(["xdg-user-dir", dir]).output.chomp;
 		}
 
 		return paths;
@@ -62,17 +60,11 @@ version(OSX)
 		string[] paths;
 		string home = getHomeDirectory();
 
+		immutable dirs = ["Desktop", "Downloads", "Documents", "Music", "Pictures", "Movies", "Sites", "Public"];
+
 		if (home.length > 0)
-		{
-			paths ~= home ~ "/Desktop";
-			paths ~= home ~ "/Downloads";
-			paths ~= home ~ "/Documents";
-			paths ~= home ~ "/Music";
-			paths ~= home ~ "/Pictures";
-			paths ~= home ~ "/Movies";
-			paths ~= home ~ "/Sites";
-			paths ~= home ~ "/Public";
-		}
+			foreach(dir; dirs)
+				paths ~= buildPath(home, dir);
 
 		return paths;
 	}
