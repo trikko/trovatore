@@ -31,7 +31,8 @@ trovatore re?or*f
 trovatore -m ends report.pdf
 ```
 
-> **Note**: When using shells like zsh (default on macOS), wildcards need to be quoted to prevent shell expansion. For example:
+> [!WARNING]
+> When using shells like zsh (default on macOS), wildcards need to be quoted to prevent shell expansion. For example:
 > ```bash
 > # This won't work in zsh
 > trovatore re?or*f
