@@ -216,7 +216,7 @@ void main(string[] args)
 	{
 		// Default blacklist
 		blacklist = [
-			"/dev", "/proc", "/sys", "/run", "/mnt", "/snap", "/usr/share/man", "/usr/share/doc", "/var/lib/", "/usr/src", "/etc/firejail",
+			"/dev", "/proc", "/sys", "/run", "/mnt", "/snap", "/usr/share/man", "/usr/share/doc", "/var/lib", "/usr/src", "/etc/firejail",
 			".gradle", ".dub", ".npm", "node_modules", "bower_components", ".cargo", ".maven", ".venv", "venv", ".virtualenv", "__pycache__", ".cache", "cache", ".tmp", "tmp", ".git", ".svn", ".github",
 			".hg", ".bzr", ".vscode", ".idea", ".eclipse", ".vs", ".atom", ".DS_Store", "__MACOSX", "log", "logs", ".log", "debug", ".thumbnails", ".Trash", ".config", ".local", ".cache", "site-packages", "packages", "extensions", "pkg", "pkgs",
 			"modules", "plugins", "plugin", "addons", "dist-packages", "lib-dynload", "cmakefiles", ".deps", ".obj", ".o", "meson-logs", "meson-info", ".ninja_log", ".ninja_build", "autom4ate.cache", ".mozilla"
@@ -224,6 +224,11 @@ void main(string[] args)
 
 		std.file.write(buildPath(configDir, "blacklist"), blacklist.join("\n"));
 	}
+
+	// Remove trailing slashes from blacklist
+	foreach(ref b; blacklist)
+		if (b.length > 1 && b[$-1] == '/')
+			b = b[0..$-1];
 
 	// Get targets
 	auto target = args[1..$].join(" ");
@@ -268,19 +273,24 @@ void main(string[] args)
 
 		while(current < path.length)
 		{
+			auto currentPath = path[current];
+
+			if(currentPath.length > 1 && currentPath[$-1] == '/')
+				currentPath = currentPath[0..$-1];
+
 			try {
 				// Skip if already visited
-				if (path[current] in visited)
+				if (currentPath in visited)
 				{
 					current++;
 					continue;
 				}
 
 				// Mark as visited
-				visited[path[current]] = true;
+				visited[currentPath] = true;
 
 				// Get directory entries
-				auto de = dirEntries(path[current], SpanMode.shallow, false);
+				auto de = dirEntries(currentPath, SpanMode.shallow, false);
 
 				foreach(DirEntry d; de)
 				{
