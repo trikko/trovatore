@@ -286,21 +286,17 @@ void main(string[] args)
 
 				foreach(DirEntry d; de)
 				{
-					// Skip symlinks
-					if (d.isSymlink) continue;
-
 					// Should we recurse into this directory?
 					if (d.isDir)
 					{
-						// Skip hidden directories
-						if (skipHidden && d.name.baseName.startsWith(".")) continue;
+						bool skip =
+							d.isSymlink ||	// Skip symlinks
+							blacklist.canFind(d.name) ||	// Skip blacklisted directories
+							blacklist.canFind(d.name.baseName) ||	// Skip blacklisted directories
+							(skipHidden && d.name.baseName.startsWith("."))  ||	// Skip hidden directories
+							d.name in visited;	// Skip already visited directories
 
-						// Skip blacklisted directories
-						if (blacklist.canFind(d.name)) continue;
-						if (blacklist.canFind(d.name.baseName)) continue;
-
-						// Add to path
-						if (d.name !in visited)
+						if (skip == false)
 							path ~= d.name;
 					}
 
