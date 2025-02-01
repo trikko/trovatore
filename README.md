@@ -30,6 +30,16 @@ trovatore re?or*f
 # contains - matches if filename contains pattern (default)
 trovatore -m ends report.pdf
 ```
+
+> **Note**: When using shells like zsh (default on macOS), wildcards need to be quoted to prevent shell expansion. For example:
+> ```bash
+> # This won't work in zsh
+> trovatore re?or*f
+>
+> # Use this instead
+> trovatore "re?or*f"
+> ```
+
 ## Nightly builds:
 
 Automatically compiled binaries are available [here](https://www.dropbox.com/scl/fo/2pjv2ul8emf36m0ol0fhd/AHTj41H5iyns_uyHi7KQwSY?rlkey=bv7x3wsqtgs6q1oj84zo3jxha&st=49yzn64o&dl=0)
