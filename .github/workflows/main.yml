@@ -31,6 +31,7 @@ jobs:
         echo "$VERSION" > version
 
     - name: Build static
+      run: |
         echo "FROM alpine:latest
         RUN apk add vim gcc musl-dev ldc dub llvm-libunwind-static openssl-libs-static gzip upx cmake make
         WORKDIR /app
@@ -71,6 +72,7 @@ jobs:
         echo "Architecture: amd64" >> trovatore-$VERSION/DEBIAN/control
         echo "Maintainer: Andrea Fontana <me@andreafontana.it>" >> trovatore-$VERSION/DEBIAN/control
         echo "Description:  A fast command-line tool for searching files by name
+ ." >> trovatore-$VERSION/DEBIAN/control
 
         cp trovatore trovatore-$VERSION/usr/bin/
         cp LICENSE trovatore-$VERSION/usr/share/doc/trovatore/
