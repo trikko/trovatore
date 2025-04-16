@@ -98,7 +98,7 @@ jobs:
 
     - name: Pull latest changes
       run: |
-        git checkout -- source/app.d
+        git checkout -- version
         git fetch origin
         git checkout gh-pages
         git pull origin gh-pages
@@ -120,7 +120,7 @@ jobs:
         publish_dir: ./public
         force_orphan: false
         keep_files: true
-        
+
 
 name: Build Trovatore (linux-static)
 
@@ -142,7 +142,7 @@ jobs:
     - name: Build Docker image
       run: |
         echo "commit: ${GITHUB_SHA::7}" > version
-        
+
     # Add version info if this is a release
     - name: Set version info for release
       if: startsWith(github.ref, 'refs/tags/')
@@ -190,8 +190,8 @@ jobs:
         echo "Priority: optional" >> trovatore-$VERSION/DEBIAN/control
         echo "Architecture: amd64" >> trovatore-$VERSION/DEBIAN/control
         echo "Maintainer: Andrea Fontana <me@andreafontana.it>" >> trovatore-$VERSION/DEBIAN/control
-        echo "Description:  A fast command-line tool for searching files by name 
-        
+        echo "Description:  A fast command-line tool for searching files by name
+
         cp trovatore trovatore-$VERSION/usr/bin/
         cp LICENSE trovatore-$VERSION/usr/share/doc/trovatore/
         cp README.md trovatore-$VERSION/usr/share/doc/trovatore/
