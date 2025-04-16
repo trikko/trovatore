@@ -8,7 +8,6 @@ Trovatore combines these two insights: it ignores "blackhole" folders and priori
 
 Unlike other solutions, it doesn't rely on an indexed database, performing real-time searches directly on the filesystem.
 
-
 ## Usage
 
 Basic usage:
@@ -41,9 +40,9 @@ trovatore -m ends report.pdf
 > trovatore "re?or*f"
 > ```
 
-## Nightly builds:
+## Download
 
-Automatically compiled binaries are available [here](https://www.dropbox.com/scl/fo/2pjv2ul8emf36m0ol0fhd/AHTj41H5iyns_uyHi7KQwSY?rlkey=bv7x3wsqtgs6q1oj84zo3jxha&st=49yzn64o&dl=0)
+Automatically compiled binaries are available [here](https://trikko.github.io/trovatore/)
 
 ## Building from source
 
