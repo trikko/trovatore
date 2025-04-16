@@ -1,7 +1,3 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
 name: Build Trovatore (macOS)
 
 on:
@@ -30,10 +26,19 @@ jobs:
       with:
         compiler: ${{ matrix.dc }}
 
-    - name: 'Build & Test'
+    - name: 'Set Version'
       run: |
         echo "commit: ${GITHUB_SHA::7}" > version
-        dub build --compiler=$DC --build=release-nobounds
+    
+    - name: Set version info for release
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        VERSION=$(echo ${{ github.ref }} | sed 's/refs\/tags\///')
+        echo "$VERSION" >> version
+        
+    - name: 'Build & Test'
+      run: |
+        dub build --compiler=$DC --build=release --config=trovatore
 
     - name: Upload binary as artifact
       uses: actions/upload-artifact@v4
@@ -41,11 +46,24 @@ jobs:
         name: trovatore-${{ matrix.os }}
         path: trovatore
 
-    - name: Upload to Dropbox
-      uses: Lewuathe/dropbox-github-action@v1
+    - name: Pull latest changes
+      run: |
+        git checkout -- source/app.d
+        git fetch origin
+        git checkout gh-pages
+        git pull origin gh-pages
+
+    - name: Prepara directory per GitHub Pages
+      run: |
+        mkdir -p public/${{ matrix.os }}
+        cp trovatore public/${{ matrix.os }}/trovatore
+
+    # Pubblica su GitHub Pages
+    - name: Deploy su GitHub Pages
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: peaceiris/actions-gh-pages@v3
       with:
-        dropbox-app-key: ${{ secrets.DROPBOX_APP_KEY }}
-        dropbox-app-secret: ${{ secrets.DROPBOX_APP_SECRET }}
-        dropbox-refresh-token: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
-        source-path: trovatore
-        target-path: /release/macos-${{ runner.arch }}/trovatore
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./public
+        force_orphan: false
+        keep_files: true
