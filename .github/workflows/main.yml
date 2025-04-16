@@ -71,8 +71,7 @@ jobs:
         echo "Priority: optional" >> trovatore-$VERSION/DEBIAN/control
         echo "Architecture: amd64" >> trovatore-$VERSION/DEBIAN/control
         echo "Maintainer: Andrea Fontana <me@andreafontana.it>" >> trovatore-$VERSION/DEBIAN/control
-        echo "Description:  A fast command-line tool for searching files by name
- ." >> trovatore-$VERSION/DEBIAN/control
+        echo "Description:  A fast command-line tool for searching files by name." >> trovatore-$VERSION/DEBIAN/control
 
         cp trovatore trovatore-$VERSION/usr/bin/
         cp LICENSE trovatore-$VERSION/usr/share/doc/trovatore/
@@ -103,7 +102,7 @@ jobs:
 
     - name: Pull latest changes
       run: |
-        git checkout -- source/app.d
+        git checkout -- version
         git fetch origin
         git checkout gh-pages
         git pull origin gh-pages
