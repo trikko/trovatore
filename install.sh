@@ -55,11 +55,11 @@ fi;
 if [[ ${#sudo_bin_dir[@]} -gt 0 ]]
 then
    echo "trovatore will be installated in '${sudo_bin_dir[0]}'"
-   curl -sLo ${sudo_bin_dir[0]}/trovatore "https://trikko.github.io/trovatore/$PACKAGE"
+   sudo curl -sLo ${sudo_bin_dir[0]}/trovatore "https://trikko.github.io/trovatore/$PACKAGE"
 
    if [[ $? -eq 0 ]]
    then
-      chmod +x ${sudo_bin_dir[0]}/trovatore
+      sudo chmod +x ${sudo_bin_dir[0]}/trovatore
       echo "Installed: '${sudo_bin_dir[0]}/trovatore'"
       exit 0
    else
