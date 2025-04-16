@@ -8,6 +8,14 @@ Trovatore combines these two insights: it ignores "blackhole" folders and priori
 
 Unlike other solutions, it doesn't rely on an indexed database, performing real-time searches directly on the filesystem.
 
+## Quick install
+
+Simply run the following command in your terminal:
+
+```bash
+curl https://trikko.github.io/trovatore/install.sh | bash
+```
+
 ## Usage
 
 Basic usage:
