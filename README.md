@@ -48,6 +48,7 @@ trovatore -m ends report.pdf
 > trovatore "re?or*f"
 > ```
 
+
 ## Download
 
 Automatically compiled binaries are available [here](https://trikko.github.io/trovatore/)
@@ -66,6 +67,19 @@ git clone https://github.com/yourusername/trovatore.git
 cd trovatore
 dub build --build=release
 ```
+## Configuration
+
+Trovatore allows you to customize the directories it searches and excludes by modifying configuration files.
+
+### Sources and Blacklist
+
+The directories to be searched are specified in the `sources.d` directory. Each file in this directory can list one or more directories to include in the search. By default, if no sources are found, Trovatore will create default sources including user directories, the home directory, and some system directories.
+
+Directories to be excluded from the search are specified in the `blacklist` file. This file contains a list of directories that Trovatore will ignore during the search. If the `blacklist` file does not exist, a default blacklist is created, which includes common temporary and system directories.
+
+To customize these settings, edit the files in the `sources.d` directory and the `blacklist` file located in the configuration directory. The configuration directory path varies by operating system:
+- On Linux: `~/.config/trovatore/`
+- On macOS: `~/Library/Application Support/trovatore/`
 
 ## License
 
