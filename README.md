@@ -63,7 +63,7 @@ Automatically compiled binaries are available [here](https://trikko.github.io/tr
 Clone the repository and build with DUB:
 
 ```bash
-git clone https://github.com/yourusername/trovatore.git
+git clone https://github.com/trikko/trovatore
 cd trovatore
 dub build --build=release
 ```
